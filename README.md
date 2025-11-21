@@ -1,5 +1,7 @@
 # cmake-modules-toolchain
 
+[![🚀 deploy](https://github.com/libhal/cmake-modules-toolchain/actions/workflows/deploy.yml/badge.svg)](https://github.com/libhal/cmake-modules-toolchain/actions/workflows/deploy.yml)
+
 A Conan tool package that provides a CMake toolchain for enabling C++ modules and `import std`.
 
 ## What it does
