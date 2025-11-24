@@ -22,7 +22,7 @@ required_conan_version = ">=2.2.0"
 
 class cmake_modules_toolchain_conan(ConanFile):
     name = "cmake-modules-toolchain"
-    version = "1.0.1"
+    version = "1.0.2"
     license = "Apache-2.0"
     homepage = "https://github.com/libhal/cmake-modules-toolchain"
     description = "CMake toolchain for enabling C++ modules and import std"
@@ -45,3 +45,4 @@ class cmake_modules_toolchain_conan(ConanFile):
         self.conf_info.append(
             "tools.cmake.cmaketoolchain:user_toolchain",
             toolchain_path)
+        self.conf_info.define("tools.cmake.cmaketoolchain:generator", "Ninja")
