@@ -30,6 +30,10 @@ class cmake_modules_toolchain_conan(ConanFile):
     exports_sources = ("cmake/*", "LICENSE")
     no_copy_source = True
 
+    def build_requirements(self):
+        self.tool_requires("cmake/[^4.1.1]", visible=True)
+        self.tool_requires("ninja/[^1.13.1]", visible=True)
+
     def package_id(self):
         self.info.clear()
 
