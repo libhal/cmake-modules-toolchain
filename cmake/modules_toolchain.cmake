@@ -12,51 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Enable C++20/23 modules support
-# Skip during try_compile (compiler detection) to avoid __CMAKE::CXX23 errors
+# Enable C++20 modules support
+# This toolchain automatically enables C++ modules support
+# No user action required - just include this via Conan
+
+# Skip during try_compile to avoid errors
 if(NOT CMAKE_CURRENT_SOURCE_DIR MATCHES "CMakeScratch")
-  block()
-    # Version requirements:
-    # C++20 modules: GCC 14+, Clang 18+, MSVC 19.29+
-    # import std: GCC 15+, Clang 18.1.2+, MSVC 19.40+
-    set(_MODULES_SUPPORTED OFF)
-    set(_IMPORT_STD_SUPPORTED OFF)
+  # Enable C++20 modules scanning
+  set(CMAKE_CXX_SCAN_FOR_MODULES ON)
 
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-      if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "14.0")
-        set(_MODULES_SUPPORTED ON)
-      endif()
-      if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "15.0")
-        set(_IMPORT_STD_SUPPORTED ON)
-      endif()
-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR
-           CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
-      if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "18.0")
-        set(_MODULES_SUPPORTED ON)
-      endif()
-      if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "18.1.2")
-        set(_IMPORT_STD_SUPPORTED ON)
-      endif()
-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-      if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.29")
-        set(_MODULES_SUPPORTED ON)
-      endif()
-      if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.40")
-        set(_IMPORT_STD_SUPPORTED ON)
-      endif()
-    endif()
+  # Enable experimental package dependency export for modules
+  set(CMAKE_EXPERIMENTAL_EXPORT_PACKAGE_DEPENDENCIES "1942b4fa-b2c5-4546-9385-83f254070067")
 
-    if(_MODULES_SUPPORTED)
-      set(CMAKE_CXX_MODULE_STD ON PARENT_SCOPE)
-      set(CMAKE_CXX_SCAN_FOR_MODULES ON PARENT_SCOPE)
-    else()
-      message(STATUS "C++20 modules disabled: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} does not support it")
-    endif()
-
-    if(_IMPORT_STD_SUPPORTED)
-      set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "d0edc3af-4c50-42ea-a356-e2862fe7a444" PARENT_SCOPE)
-    else()
-      message(STATUS "import std disabled: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} does not support it")
-    endif()
-  endblock()
+  # Print status message after project() is called
+  function(_libhal_modules_status)
+    message(STATUS "C++20 modules support enabled")
+  endfunction()
+  cmake_language(DEFER CALL _libhal_modules_status)
 endif()

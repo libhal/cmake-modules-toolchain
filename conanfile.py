@@ -14,7 +14,7 @@
 
 from conan import ConanFile
 from conan.tools.files import copy
-import os
+from pathlib import Path
 
 
 required_conan_version = ">=2.2.0"
@@ -22,7 +22,7 @@ required_conan_version = ">=2.2.0"
 
 class cmake_modules_toolchain_conan(ConanFile):
     name = "cmake-modules-toolchain"
-    version = "1.0.2"
+    version = "1.0.3"
     license = "Apache-2.0"
     homepage = "https://github.com/libhal/cmake-modules-toolchain"
     description = "CMake toolchain for enabling C++ modules and import std"
@@ -38,15 +38,16 @@ class cmake_modules_toolchain_conan(ConanFile):
         self.info.clear()
 
     def package(self):
-        copy(self, "LICENSE", dst=os.path.join(
-            self.package_folder, "licenses"), src=self.source_folder)
-        copy(self, "cmake/*.cmake", src=self.source_folder,
+        copy(self, "LICENSE",
+             dst=Path(self.package_folder) / "licenses",
+             src=self.source_folder)
+        copy(self, "cmake/*.cmake",
+             src=self.source_folder,
              dst=self.package_folder)
 
     def package_info(self):
-        toolchain_path = os.path.join(
-            self.package_folder, "cmake/modules_toolchain.cmake")
-        self.conf_info.append(
-            "tools.cmake.cmaketoolchain:user_toolchain",
-            toolchain_path)
+        PACKAGE_DIR = Path(self.package_folder)
+        TOOLCHAIN_PATH = str(PACKAGE_DIR / "cmake" / "modules_toolchain.cmake")
+        self.conf_info.append("tools.cmake.cmaketoolchain:user_toolchain",
+                              TOOLCHAIN_PATH)
         self.conf_info.define("tools.cmake.cmaketoolchain:generator", "Ninja")
